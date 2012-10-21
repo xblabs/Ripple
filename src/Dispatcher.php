@@ -92,7 +92,7 @@ class Dispatcher implements IDispatcher
     public function addListener( $type, $listener = null, $priority = 1 )
     {
         if ( !is_callable( $listener ) ) {
-            return; // TODO throw ex
+            throw new Exception( Exception::NOT_CALLABLE );
         }
         if ( !is_int( $priority ) ) {
             $priority = 1;
@@ -111,7 +111,7 @@ class Dispatcher implements IDispatcher
     public function addListenerAggregate( $pattern, $listener = null, $priority = 1 )
     {
         if( !is_object( $listener ) ) {
-            return; // TODO throw ex
+            throw new Exception( Exception::NOT_OBJECT );
         }
         if( !is_int( $priority ) ) {
             $priority = 1;
@@ -131,7 +131,7 @@ class Dispatcher implements IDispatcher
     public function removeListener( $type, $listener )
     {
         if ( !is_callable( $listener ) ) {
-            return false; // TODO throw ex
+            throw new Exception( Exception::NOT_CALLABLE );
         }
         $removed = false;
         $l = count( $this->_listeners[ $type ] );
@@ -273,7 +273,7 @@ class Dispatcher implements IDispatcher
                     if( $reflInfo->getNumberOfParameters() > 1 ) {
                         $reflPr = new \ReflectionParameter( $d->listener, 0 );
                         $cbArgName = $reflPr->getName();
-                        if( !in_array( $cbArgName, array( 'e', 'event', 'drip' ) ) ) {
+                        if( !in_array( $cbArgName, array( 'e', 'event' ) ) ) {
                             $useParamsAsCallbackArg = true;
                         }
                     }
