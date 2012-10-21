@@ -5,16 +5,16 @@
  */
 namespace Ripple;
 
-class RippleLaravel extends Stat\Ripple
+class RippleLaravel extends DispatcherStatic
 {
     public static function listen($event, $callback, $priority = 1)
     {
-        Stat\Ripple::addListener( $event, $callback, $priority );
+        static::addListener( $event, $callback, $priority );
     }
 
     public static function listenAggregate( $event, $callback, $priority = 1 )
     {
-         Stat\Ripple::addListenerAggregate( $event, $callback, $priority );
+         static::addListenerAggregate( $event, $callback, $priority );
     }
 
     public static function fire( $events, $parameters = array(), $halt = false )
@@ -28,9 +28,9 @@ class RippleLaravel extends Stat\Ripple
                 $useParamsAsCallbackArg = true;
             }
             if ( $halt ) {
-                Stat\Ripple::dispatchUntil( $event, null, $parameters, $useParamsAsCallbackArg );
+                static::dispatchUntil( $event, null, $parameters, $useParamsAsCallbackArg );
             } else {
-                Stat\Ripple::dispatch( $event, null, $parameters, $useParamsAsCallbackArg );
+                static::dispatch( $event, null, $parameters, $useParamsAsCallbackArg );
             }
         }
     }
@@ -41,7 +41,7 @@ class RippleLaravel extends Stat\Ripple
         if ( preg_match( '`^laravel\.`', $event ) ) {
             $useParamsAsCallbackArg = true;
         }
-       return Stat\Ripple::dispatchGetFirst( $event, null, $parameters, $useParamsAsCallbackArg );
+       return static::dispatchGetFirst( $event, null, $parameters, $useParamsAsCallbackArg );
     }
 
     public static function until($event, $parameters = array())
@@ -50,18 +50,18 @@ class RippleLaravel extends Stat\Ripple
         if ( preg_match( '`^laravel\.`', $event ) ) {
             $useParamsAsCallbackArg = true;
         }
-        return Stat\Ripple::dispatchUntil( $event, null, $parameters, $useParamsAsCallbackArg );
+        return static::dispatchUntil( $event, null, $parameters, $useParamsAsCallbackArg );
     }
 
 
     public static function clear($event)
     {
-        Stat\Ripple::removeListenersForEvent( $event );
+        static::removeListenersForEvent( $event );
     }
 
     public static function listeners($event)
     {
-        return Stat\Ripple::hasListener( $event );
+        return static::hasListener( $event );
     }
 
 }
