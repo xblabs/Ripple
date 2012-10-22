@@ -54,15 +54,7 @@ class Dispatcher implements IDispatcher
         return $this->_dispatch( $e, false, $useParamsAsCallbackArg );
     }
 
-    /**
-     * dispatch event and halt at the first listener that returns not null or false
-     *
-     * @param $event
-     * @param null $target
-     * @param array $argv
-     * @param bool $useParamsAsCallbackArg
-     * @return array | null array of gathered respones in the dispatch cycle
-     */
+
     public function dispatchUntil( $event, $target = null, $argv = array(), $useParamsAsCallbackArg = false )
     {
         /** @var Event $e */
@@ -70,6 +62,7 @@ class Dispatcher implements IDispatcher
         return $this->_dispatch( $e, true, $useParamsAsCallbackArg );
     }
 
+    // TODO write test
     /**
      *  Dispatch an event and return the first response.
      *
@@ -79,9 +72,9 @@ class Dispatcher implements IDispatcher
      * @param bool $useParamsAsCallbackArg
      * @return mixed
      */
-    public function dispatchGetFirst( $event, $target = null, $argv = array(), $useParamsAsCallbackArg = false )
+    public function first( $event, $target = null, $argv = array(), $useParamsAsCallbackArg = false )
     {
-        return reset( ( $this->dispatch( $event, $target, $argv, $useParamsAsCallbackArg ) ) );
+        return reset( $this->dispatch( $event, $target, $argv, $useParamsAsCallbackArg ) );
     }
 
 
