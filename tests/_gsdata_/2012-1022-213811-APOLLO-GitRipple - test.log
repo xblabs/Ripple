@@ -1,0 +1,35 @@
+----- 22/10/2012 21:38:11: Job 'GitRipple - test': ANALYSIS started by User on computer 'APOLLO' (GoodSync 9.2.9.5 x64 on Windows 7) -----
+GitRipple - test: C:\__dev\_devserver\pyrradcore-ns\tests\librarytests\Ripple <-> C:\__dev\_devserver\githubfragments\Ripple\tests, SavePrevVers, CleanupPrevVers=30d, CleanupOldGens=24m, TmpDest, EstReq, CopyLocked, DetectMovesAndRenames, DetectFolderMoves, FileLinksDrill, Reconnect=3, ChangeLimit=10
+Exclude Hidden, Exclude System, Exclude licens*.rfo|cache.rfo|mru.rfo|mpp*.rfo|RoboForm Online Account.rfp|name *._gstmp|/System Volume Information|Thumbs.db|.DS_Store 
+Left: Reading State File C:\__dev\_devserver\pyrradcore-ns\tests\librarytests\Ripple\_gsdata_\_file_state._gs
+Left: State file does not exist: C:\__dev\_devserver\pyrradcore-ns\tests\librarytests\Ripple\_gsdata_\_file_state._gs
+Left: No State File found, New State will be built
+Left: Files: 2 (excluded 0). Folders: 0 (excluded 0). C: NTFS, Free: 428 GB, Total: 580 GB
+Right: Reading State File C:\__dev\_devserver\githubfragments\Ripple\tests\_gsdata_\_file_state._gs
+Right: State file does not exist: C:\__dev\_devserver\githubfragments\Ripple\tests\_gsdata_\_file_state._gs
+Right: No State File found, New State will be built
+Right: Files: 2 (excluded 0). Folders: 0 (excluded 0). C: NTFS, Free: 428 GB, Total: 580 GB
+/InstanceTest.php: Conflict: New files that differ
+/StaticTest.php: Conflict: New files that differ
+On disk file:///C: space required for sync is 0 bytes, you have 428 GB
+On disk file:///C: space required for sync is 0 bytes, you have 428 GB
+Analyze has finished with Conflicts. Resolve Conflicts by selecting the correct sync direction, then click Sync
+Changes: 2, Conflicts: 2, CopyTime: 0, CopyState: 0/0, Errors: 0
+All Nodes (Live+Dead): 2
+----- 22/10/2012 21:38:11: Analysis Completed. Time 00:00:00, Speed: Many files/s -----
+
+New _gsdata_ folder(s) created, so rescan all job folders for their ghosts
+===== 22/10/2012 21:38:34: Job 'GitRipple - test': SYNC started by User on computer 'APOLLO' =====
+GitRipple - test: C:\__dev\_devserver\pyrradcore-ns\tests\librarytests\Ripple <-> C:\__dev\_devserver\githubfragments\Ripple\tests, SavePrevVers, CleanupPrevVers=30d, CleanupOldGens=24m, TmpDest, EstReq, CopyLocked, DetectMovesAndRenames, DetectFolderMoves, FileLinksDrill, Reconnect=3, ChangeLimit=10
+Locking folder C:\__dev\_devserver\pyrradcore-ns\tests\librarytests\Ripple for write
+Locking folder C:\__dev\_devserver\githubfragments\Ripple\tests for write
+/InstanceTest.php: unresolved conflict results in No Copy
+/StaticTest.php: unresolved conflict results in No Copy
+Save State File C:\__dev\_devserver\pyrradcore-ns\tests\librarytests\Ripple\_gsdata_\_file_state_v4._gs
+Save State File C:\__dev\_devserver\githubfragments\Ripple\tests\_gsdata_\_file_state_v4._gs
+Sync finished with 2 unresolved conflicts. Click Conflicts button to see unresolved conflicts
+Items Synced OK: 0, Errors: 0
+===== 22/10/2012 21:38:34: Sync Completed. Time: 00:00:00, Speed:  =====
+Deleted lock file C:\__dev\_devserver\pyrradcore-ns\tests\librarytests\Ripple\_gsdata_\_insync_v4.gsl
+Deleted lock file C:\__dev\_devserver\githubfragments\Ripple\tests\_gsdata_\_insync_v4.gsl
+

@@ -70,10 +70,8 @@ class Ripple_InstanceTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    /**
-     * @expectedException \Ripple\Exception
-     */
-    public function test_events_addProtectedListenerCallback_throwsException(  )
+
+    public function test_events_addProtectedListenerCallback_shouldFail(  )
     {
         $this->dispatcher->addListener( 'test', array( $this, 'listenerProtected' ) );
         $this->assertEquals( 0, count( $this->dispatcher->getAllListeners() ) );
@@ -229,29 +227,17 @@ class Ripple_InstanceTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function test_events_dispatchUntil_firstTrue()
+    public function test_events_dispatchUntil()
     {
         $this->dispatcher->addListener( 'test', array( $this, 'listenerTrue' ), 1 ); // fired first , should stop here
         $this->dispatcher->addListener( 'test', array( $this, 'listenerFalse' ), 100 );
         $this->dispatcher->addListener( 'test', array( $this, 'listenerFalse' ), 200 );
         $event =  new Event( 'test', $this, null, false );
-        $this->assertEquals( 0, $this->_eventsTrackedTrueReturnCount );
         $result = $this->dispatcher->dispatchUntil( $event );
         $this->assertEquals( 1, $this->_eventsTrackedTrueReturnCount );
     }
 
 
-    public function test_events_dispatchUntil_skipFirstFalse()
-    {
-
-        $this->dispatcher->addListener( 'test', array( $this, 'listenerFalse' ), 1 );
-        $this->dispatcher->addListener( 'test', array( $this, 'listenerTrue' ), 2 );
-        $this->dispatcher->addListener( 'test', array( $this, 'listenerTrue2' ), 3 ); // fired first , should stop here
-        $event =  new Event( 'test', $this, null, false );
-        $this->assertEquals( 0, $this->_eventsTrackedTrueReturnCount );
-        $result = $this->dispatcher->dispatchUntil( $event );
-        $this->assertEquals( 2, $this->_eventsTrackedTrueReturnCount );
-    }
 
 
     public function test_events_getParam_noArg_fetches_params()
@@ -259,28 +245,6 @@ class Ripple_InstanceTest extends \PHPUnit_Framework_TestCase
         $this->dispatcher->addListener( 'test', array( $this, 'listenerDefault' )  );
         $this->dispatcher->dispatch( 'test', $this, new EventTestParam() );
         $this->assertInstanceOf( 'EventTestParam', $this->_catchedEvent->getParam() );
-    }
-
-
-    public function test_events_getFirst()
-    {
-        $this->assertEquals( false, $this->dispatcher->hasListener( 'test' ) );
-        $counter = 0;
-        $this->dispatcher->addListener( 'test', function( $e ) use(&$counter) {
-            $counter++;
-            return 'one';
-        }, 1 );
-         $this->dispatcher->addListener( 'test', function( $e ) use(&$counter) {
-            $counter++;
-            return false;
-        }, 2 );
-         $this->dispatcher->addListener( 'test', function( $e ) use(&$counter) {
-            $counter++;
-            return 'three';
-        }, 3 );
-        $result = $this->dispatcher->dispatchGetFirst( 'test' );
-        $this->assertEquals( 3, $counter );
-        $this->assertEquals( 'one', $result );
     }
 
 
@@ -401,13 +365,7 @@ class Ripple_InstanceTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function listenerTrue( $e )
-    {
-        $this->_eventsTrackedTrueReturnCount++;
-        return true;
-    }
-
-    public function listenerTrue2( $e )
+     public function listenerTrue( $e )
     {
         $this->_eventsTrackedTrueReturnCount++;
         return true;

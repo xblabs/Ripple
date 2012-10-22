@@ -68,10 +68,7 @@ class Ripple_StaticTest extends \PHPUnit_Framework_TestCase
 
 
 
-    /**
-     * @expectedException \Ripple\Exception
-     */
-    public function test_events_addProtectedListenerCallback_throwsException()
+    public function test_events_addProtectedListenerCallback_shouldFail(  )
     {
         DispatcherStatic::addListener( 'test', array( $this, 'listenerProtected' ) );
         $this->assertEquals( 0, count( DispatcherStatic::getAllListeners() ) );

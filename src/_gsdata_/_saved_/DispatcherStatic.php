@@ -48,7 +48,7 @@ class DispatcherStatic
 
     public static function dispatchGetFirst( $event, $target = null, $argv = array(), $useParamsAsCallbackArg = false  )
     {
-        $results = static::dispatcher()->dispatchGetFirst( $event, $target, $argv, $useParamsAsCallbackArg );
+        $results = static::dispatcher()->dispatch( $event, $target, $argv, $useParamsAsCallbackArg );
         return reset( $results );
     }
 
