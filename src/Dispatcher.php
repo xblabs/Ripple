@@ -81,7 +81,8 @@ class Dispatcher implements IDispatcher
      */
     public function dispatchGetFirst( $event, $target = null, $argv = array(), $useParamsAsCallbackArg = false )
     {
-        return reset( ( $this->dispatch( $event, $target, $argv, $useParamsAsCallbackArg ) ) );
+        $r = $this->dispatch( $event, $target, $argv, $useParamsAsCallbackArg );
+        return reset( $r );
     }
 
 
