@@ -1,6 +1,6 @@
 Ripple
 ======
 
-Event Framework for PHP 5.3
+An Event Framework for PHP 8.1+
 
 For usage have a look at the unit tests.
