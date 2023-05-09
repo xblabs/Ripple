@@ -1,241 +1,115 @@
 <?php
-/**
- * @author Henry Schmieder
-   @example
- * @version 0.1 24/06/12 13:04
- */
+
 namespace Ripple;
 
 class Event
 {
-    /**
-     * @var string eventType
-     */
-    protected $_type;
-
-    /**
-     * @var string|object The event target
-     */
-    protected $_target;
-
-    /**
-     * @var array|\ArrayAccess|object The event parameters
-     */
-    protected $_params = array();
+	 public function __construct(
+        protected string|null $type = null,
+        protected string|object|null $target = null,
+        protected mixed $params = null,
+        protected bool $cancelable = true,
+        protected bool $propagationStopped = false
+    ) {}
 
 
-    /** @var bool whether or not the event can be stopped from propagating */
-    protected $_cancelable;
-
-
-    /** @var bool */
-    protected $_propagationStopped;
-
-
-
-    /**
-     * Constructor
-     *
-     * Accept a target and its parameters.
-     *
-     * @param  string $name Event name
-     * @param  string|object $target
-     * @param  array|\ArrayAccess $params
-     * @return void
-     */
-    public function __construct( $type = null, $target = null, $params = null, $cancelable = true )
+    public function getType(): ?string
     {
-        if ( null !== $type ) {
-            $this->setType( $type );
-        }
-
-        if ( null !== $target ) {
-            $this->setTarget( $target );
-        }
-
-        if ( null !== $params ) {
-            $this->setParams( $params );
-        }
-
-        $this->setCancelable( $cancelable );
+        return $this->type;
     }
 
-
-     /**
-     * Get event type
-     *
-     * @return string
-     */
-    public function getType()
+    public function setType(string $type): static
     {
-        return $this->_type;
-    }
-
-    /**
-     * Get the event target
-     *
-     * This may be either an object, or the name of a static method.
-     *
-     * @return string|object
-     */
-    public function getTarget()
-    {
-        return $this->_target;
-    }
-
-    /**
-     * Set parameters
-     *
-     * Overwrites parameters
-     *
-     * @param  array|\ArrayAccess|object $params
-     * @return Event
-     */
-    public function setParams($params)
-    {
-        /*
-        if (!is_array($params) && !is_object($params)) {
-            throw new Pyrrad_Exception_InvalidArgument(sprintf(
-                'Event parameters must be an array or object; received "%s"', gettype($params)
-            ));
-        }
-        */
-        $this->_params = $params;
+        $this->type = $type;
         return $this;
     }
 
-    /**
-     * Get all parameters
-     *
-     * @return array|object|\ArrayAccess
-     */
-    public function getParams()
+	/**
+	 * Get the event target
+     * This may be either an object, or the name of a static method.
+	 */
+    public function getTarget(): string|object|null
     {
-        return empty( $this->_params ) ? null : $this->_params;
+        return $this->target;
     }
 
-    /**
+    public function setTarget(string|object $target): static
+    {
+        $this->target = $target;
+        return $this;
+    }
+
+    public function getParams(): mixed
+    {
+        return $this->params;
+    }
+
+    public function setParams(mixed $params): static
+    {
+        $this->params = $params;
+        return $this;
+    }
+
+
+	 /**
      * Get an individual parameter
-     *
      * If the parameter does not exist, the $default value will be returned.
      *
-     * @param  string|int $name
-     * @param  mixed $default
-     * @return mixed
      */
-    public function getParam($name = null, $default = null)
+	 public function getParam(string|int|null $name = null, mixed $default = null): mixed
     {
-        if( empty( $name ) ) {
-            return empty( $this->_params ) ? null : $this->_params;
-        }
-        // Check in params that are arrays or implement array access
-        if (is_array($this->_params) || $this->_params instanceof \ArrayAccess) {
-            if (!isset($this->_params[$name])) {
-                return $default;
-            }
-
-            return $this->_params[$name];
+        if ($name === null) {
+            return $this->params;
         }
 
-        // Check in normal objects
-        if (!isset($this->_params->{$name})) {
-            return $default;
+        if (is_array($this->params) || $this->params instanceof \ArrayAccess) {
+            return $this->params[$name] ?? $default;
         }
-        return $this->_params->{$name};
+
+        return $this->params?->{$name} ?? $default;
     }
 
 
-
-    /**
-     * Set the event name
-     *
-     * @param  string $name
-     * @return Event
-     */
-    public function setType($name)
+	public function setParam(string|int $name, mixed $value): static
     {
-        $this->_type = (string) $name;
-        return $this;
-    }
-
-    /**
-     * Set the event target/context
-     *
-     * @param  null|string|object $target
-     * @return Event
-     */
-    public function setTarget($target)
-    {
-        $this->_target = $target;
-        return $this;
-    }
-
-    /**
-     * Set an individual parameter to a value
-     *
-     * @param  string|int $name
-     * @param  mixed $value
-     * @return Event
-     */
-    public function setParam($name, $value)
-    {
-        if (is_array($this->_params) || $this->_params instanceof \ArrayAccess) {
-            // Arrays or objects implementing array access
-            $this->_params[$name] = $value;
+        if (is_array($this->params) || $this->params instanceof \ArrayAccess) {
+            $this->params[$name] = $value;
         } else {
-            // Objects
-            $this->_params->{$name} = $value;
+            $this->params->{$name} = $value;
         }
+
         return $this;
     }
 
-    /**
-     * Stop further event propagation
-     *
-     * @param  bool $flag
-     * @return void
-     */
-    public function stopPropagation($flag = true)
+
+
+	public function isCancelable(): bool
     {
-        if( $this->_cancelable ) {
-            $this->_propagationStopped = (bool) $flag;
-        }
+        return $this->cancelable;
     }
 
-    /**
-     * Is propagation stopped?
-     *
-     * @return bool
-     */
-    public function propagationIsStopped()
+    public function setCancelable(bool $cancelable): static
     {
-        return $this->_propagationStopped;
-    }
-
-    /**
-     * @param boolean $cancelable
-     * @return Event
-     */
-    public function setCancelable( $cancelable )
-    {
-        $this->_cancelable = $cancelable;
+        $this->cancelable = $cancelable;
         return $this;
     }
 
-    /**
-     * @return boolean
-     */
-    public function getCancelable()
+    public function isPropagationStopped(): bool
     {
-        return $this->_cancelable;
+        return $this->propagationStopped;
     }
 
-
-    public function __toString()
+    public function stopPropagation(): void
     {
-       return $this->getType();
+        if ($this->cancelable) {
+            $this->propagationStopped = true;
+        }
     }
+
+    public function __toString(): string
+    {
+        return (string)$this->getType();
+    }
+
 
 }
-
-?>

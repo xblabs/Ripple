@@ -1,96 +1,89 @@
 <?php
-/**
- * @author Henry Schmieder
- * @version 0.1 23/06/12 10:42
- */
+
 namespace Ripple;
 
 class DispatcherStatic
 {
-     /** @var Dispatcher */
-    protected static $_dispatcher;
+    private static Dispatcher $_dispatcher;
 
-
-    /**
-     * @return Dispatcher
-     */
-    public static function dispatcher()
+    public static function dispatcher(): Dispatcher
     {
-        if ( !static::$_dispatcher ) {
-            static::$_dispatcher = new Dispatcher();
-        }
-        return static::$_dispatcher;
+        return static::$_dispatcher ??= new Dispatcher();
+    }
+
+    public static function setEventClass(string $class): void
+    {
+        static::dispatcher()->setEventClass($class);
     }
 
 
-    public static function setEventClass( $class )
-    {
-        return static::dispatcher()->setEventClass( $class );
-    }
-
-    /**
-     * @static
-     * @param $event
-     * @param null $target
-     * @param array $argv
-     * @param bool $useParamsAsCallbackArg
-     * @return Event
-     */
-    public static function dispatch( $event, $target = null, $argv = array(), $useParamsAsCallbackArg = false  )
+    public static function dispatch( string|Event $event, string|object|null $target = null, mixed $argv = null, bool $useParamsAsCallbackArg = false ): mixed
     {
          return static::dispatcher()->dispatch( $event, $target, $argv, $useParamsAsCallbackArg );
     }
 
-    public static function dispatchUntil( $event, $target = null, $argv = array(), $useParamsAsCallbackArg = false )
+    public static function dispatchUntil( string|Event $event, string|object|null $target = null, mixed $argv = null, bool $useParamsAsCallbackArg = false ): array|null|bool
     {
         return static::dispatcher()->dispatchUntil( $event, $target, $argv, $useParamsAsCallbackArg );
     }
 
-    public static function dispatchGetFirst( $event, $target = null, $argv = array(), $useParamsAsCallbackArg = false  )
+    public static function dispatchGetFirst( string|Event $event, string|object|null $target = null, mixed $argv = null, bool $useParamsAsCallbackArg = false ): mixed
     {
         $results = static::dispatcher()->dispatchGetFirst( $event, $target, $argv, $useParamsAsCallbackArg );
-        return reset( $results );
+		if( is_array( $results)) {
+			$results = reset( $results );
+		}
+		return $results;
     }
 
-    public static function hasListener( $type )
+   public static function hasListener( string $type ): bool
     {
        return static::dispatcher()->hasListener( $type );
     }
 
-    public static function addListener( $type, $listener = null, $priority = 1 )
+   public static function addListener( string $type, callable $listener, int $priority = 1 ): void
     {
         static::dispatcher()->addListener( $type, $listener, $priority );
     }
 
-    public static function addListenerAggregate( $type, $listener = null, $priority = 1 )
+	/**
+	 * @param string $pattern [component]  ( used in dispatch in the form [component]:[eventType]
+	 * @param object $listener
+	 * @param int $priority
+	 */
+   public static function addListenerAggregate( string $pattern, object $listener, int $priority = 1 ): void
     {
-        static::dispatcher()->addListenerAggregate( $type, $listener, $priority );
+        static::dispatcher()->addListenerAggregate( $pattern, $listener, $priority );
     }
 
-    public static function removeListener( $type, $listener )
+   public static function removeListener( string $type, callable $listener ): bool
     {
         return static::dispatcher()->removeListener( $type, $listener );
     }
 
-    public static function removeListenersForEvent( $type )
+   public static function removeListenersForEvent( string $type ): int
     {
         return static::dispatcher()->removeListenersForEvent( $type );
     }
 
-    public static function getAllListeners()
+	public static function getAllListenersStructured(): array
+	{
+		return static::dispatcher()->getAllListenersStructured();
+	}
+
+   public static function getAllListeners(): array
     {
        return static::dispatcher()->getAllListeners();
     }
 
-    public static function getListenersForEvent( $type )
+   public static function getListenersForEvent( string $type ): array
     {
         return static::dispatcher()->getListenersForEvent( $type );
     }
 
-    public static function removeAllListeners()
+   public static function removeAllListeners(): void
     {
         static::dispatcher()->removeAllListeners();
     }
 }
 
-?>
