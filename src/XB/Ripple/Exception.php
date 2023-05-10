@@ -1,6 +1,6 @@
 <?php
 
-namespace Ripple;
+namespace XB\Ripple;
 
 class Exception extends \Exception
 {
