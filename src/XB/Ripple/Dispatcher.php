@@ -1,6 +1,6 @@
 <?php
 
-namespace Ripple;
+namespace XB\Ripple;
 
 
 class Dispatcher implements IDispatcher
@@ -204,7 +204,13 @@ class Dispatcher implements IDispatcher
             return null;
         }
         if( count( $descriptors ) > 1 ) {
-	        usort( $descriptors, static fn( ListenerDescriptor $a, ListenerDescriptor $b ) => $b->priority > $a->priority );
+	        //usort( $descriptors, static fn( ListenerDescriptor $a, ListenerDescriptor $b ) => $b->priority > $a->priority );
+	        usort( $descriptors, static function ( ListenerDescriptor $a, ListenerDescriptor $b ) {
+		        if( $a->priority === $b->priority ) {
+			        return 0;
+		        }
+		        return ( $a->priority < $b->priority ) ? 1 : -1;
+	        } );
         }
 
         $listener = null;
