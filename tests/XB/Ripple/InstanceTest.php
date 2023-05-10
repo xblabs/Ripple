@@ -6,19 +6,15 @@
  * @group event
  */
 
-namespace Test\Ripple;
+namespace Test\XB\Ripple;
 
 use Closure;
 use PHPUnit\Framework\TestCase;
-use Ripple\Dispatcher,
-    Ripple\Event;
-use Ripple\Exception;
+use XB\Ripple\Dispatcher;
+use XB\Ripple\Event;
+use XB\Ripple\Exception;
 
 
-
-
-
-//class InstanceTest extends \PHPUnit_Framework_TestCase
 class InstanceTest extends TestCase
 {
     public const LISTENER_A_RESULT = 'listenerA result';
@@ -65,7 +61,7 @@ class InstanceTest extends TestCase
 
     public function  test_events_dispatcher_creation(): void
     {
-        $this->assertInstanceOf( '\Ripple\Dispatcher', $this->dispatcher );
+        $this->assertInstanceOf( Dispatcher::class, $this->dispatcher );
     }
 
 
@@ -373,7 +369,7 @@ class InstanceTest extends TestCase
         $this->dispatcher->addListener( 'test', $closure );
         $this->dispatcher->dispatch( 'test' );
         $this->assertTrue( $setByCb );
-        $this->assertInstanceOf( '\Ripple\Event', $capturedE );
+        $this->assertInstanceOf( Event::class, $capturedE );
     }
 
 

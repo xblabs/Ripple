@@ -3,9 +3,9 @@
  * @version 0.1 09/05/2023 17:08
  */
 
-namespace Test\Ripple;
+namespace Test\XB\Ripple;
 
-use Ripple\Event;
+use XB\Ripple\Event;
 
 class StaticTestEventTestListener
 {

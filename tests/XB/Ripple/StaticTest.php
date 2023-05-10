@@ -5,19 +5,18 @@
  *
  *  @group event
  */
-namespace Test\Ripple;
+namespace Test\XB\Ripple;
 
 use PHPUnit\Framework\TestCase;
-use Ripple\Dispatcher,
-    Ripple\Event,
-    Ripple\DispatcherStatic;
-use Test\Ripple\EventTestParam;
+use XB\Ripple\Dispatcher;
+use XB\Ripple\DispatcherStatic;
+use XB\Ripple\Event;
 
 class StaticTest extends TestCase
 {
-    const LISTENER_A_RESULT = 'listenerA result';
-    const LISTENER_B_RESULT = 'listenerB result';
-    const LISTENER_C_RESULT = 'listenerC result';
+    public const LISTENER_A_RESULT = 'listenerA result';
+    public const LISTENER_B_RESULT = 'listenerB result';
+    public const LISTENER_C_RESULT = 'listenerC result';
 
 
     /** @var Dispatcher */
@@ -56,7 +55,7 @@ class StaticTest extends TestCase
     public function  test_events_dispatcher_creation(): void
     {
         $d = new Dispatcher();
-        $this->assertInstanceOf( '\Ripple\Dispatcher', DispatcherStatic::dispatcher() );
+        $this->assertInstanceOf( Dispatcher::class,  DispatcherStatic::dispatcher() );
     }
 
 
@@ -64,7 +63,7 @@ class StaticTest extends TestCase
     public function test_events_addPublicListenerCallback(  ): void
     {
         DispatcherStatic::addListener( 'test', array( $this, 'listenerA' ) );
-        $this->assertEquals( 1, count( \Ripple\DispatcherStatic::getAllListeners() ) );
+        $this->assertCount( 1, DispatcherStatic::getAllListeners() );
 
     }
 

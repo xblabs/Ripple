@@ -1,6 +1,6 @@
 <?php
 
-namespace Ripple;
+namespace XB\Ripple;
 
 interface IDispatcher
 {
