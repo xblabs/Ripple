@@ -5,15 +5,16 @@
 
 namespace Test\XB\Ripple;
 
+use stdClass;
 use XB\Ripple\Event;
 
 class StaticTestEventTestListener
 {
-	public ?\stdClass $registrar;
+	public ?stdClass $registrar;
 
 	public function __construct()
 	{
-		$this->registrar = new \stdClass();
+		$this->registrar = new stdClass();
 		$this->registrar->capturedTypes = array();
 	}
 
