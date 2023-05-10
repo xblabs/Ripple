@@ -1,36 +1,46 @@
 {
-    "name": "xtrabyteslab/ripple",
-    "description": "Ripple is a PHP event dispatcher library that allows you to create event-driven systems by providing a simple and easy-to-use interface for handling events.",
-    "type": "library",
-    "license": "MIT",
-    "require": {
-        "php": ">=8.0"
+  "name": "xtrabyteslab/ripple",
+  "description": "Ripple is a PHP event dispatcher library that allows you to create event-driven systems by providing a simple and easy-to-use interface for handling events.",
+  "type": "library",
+  "license": "MIT",
+  "require": {
+    "php": ">=8.0"
+  },
+  "authors": [
+    {
+      "name": "XtraBytes",
+      "email": "hello@xtrabytes.net"
+    }
+  ],
+  "keywords": [
+    "event",
+    "events",
+    "broadcaster",
+    "dispatcher",
+    "listener",
+    "observer",
+    "priority",
+    "php"
+  ],
+  "autoload": {
+    "psr-4": {
+      "XB\\": "src/XB/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Test\\": "tests/"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5"
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.x-dev"
     },
-    "authors": [
-        {
-            "name": "XtraBytes",
-            "email": "hello@xtrabytes.net"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "XB\\": "src/XB/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Test\\": "tests/"
-        }
-	},
-    "require-dev": {
-        "phpunit/phpunit": "^9.5"
-    },
-     "extra": {
-        "branch-alias": {
-            "dev-master": "1.x-dev"
-        },
-        "version": "1.0.0"
-    },
-    "minimum-stability": "stable",
-    "prefer-stable": true
+    "version": "1.0.0"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
 }
