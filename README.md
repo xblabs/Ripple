@@ -12,7 +12,7 @@ Ripple is a lightweight event dispatcher for PHP 8+ that makes it easy to build 
 Install via Composer:
 
 ```bash
-composer require xtrabyteslab/ripple
+composer require xblabs/ripple
 ````
 
 If you wish to run the unit tests, install the development dependencies as well:
