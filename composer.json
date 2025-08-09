@@ -1,5 +1,5 @@
 {
-  "name": "xtrabyteslab/ripple",
+  "name": "xblabs/ripple",
   "description": "Ripple is a PHP event dispatcher library that allows you to create event-driven systems by providing a simple and easy-to-use interface for handling events.",
   "type": "library",
   "license": "MIT",
