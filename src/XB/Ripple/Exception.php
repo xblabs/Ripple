@@ -4,6 +4,5 @@ namespace XB\Ripple;
 
 class Exception extends \Exception
 {
-    public const NOT_CALLABLE = 'Resource not callable.';
-    public const NOT_OBJECT = 'Resource is not an object.';
+    public const INVALID_EVENT_CLASS = 'Event class must extend XB\Ripple\Event.';
 }

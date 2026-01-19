@@ -15,6 +15,9 @@ class Dispatcher implements IDispatcher
 
 	public function setEventClass( string $class ): self
 	{
+		if( $class !== Event::class && !is_subclass_of( $class, Event::class ) ) {
+			throw new Exception( Exception::INVALID_EVENT_CLASS );
+		}
 		$this->_eventClass = $class;
 		return $this;
 	}
@@ -128,7 +131,7 @@ class Dispatcher implements IDispatcher
 	public function removeListenersForEvent( string $type ): int
 	{
 		$affected = 0;
-		$l = count( $this->_listeners[ $type ] );
+		$l = count( $this->_listeners[ $type ] ?? [] );
 		for( $i = $l - 1; $i > -1; $i-- ) {
 			/** @var ListenerDescriptor $eventObj */
 			$eventObj = $this->_listeners[ $type ][ $i ];
@@ -187,7 +190,7 @@ class Dispatcher implements IDispatcher
 		$type = $event->getType();
 
 		if( str_contains( $type, ':' ) ) {
-			$aggParts = explode( ':', $event );
+			$aggParts = explode( ':', $type );
 			$aggregate = $aggParts[ 0 ];
 			$aggEvent = $aggParts[ 1 ];
 			if( isset( $this->_aggregatePatterns[ $aggregate ] ) ) {
