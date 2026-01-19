@@ -328,3 +328,7 @@ $dispatcher->dispatch("user.logout");
 $dispatcher->dispatch("user.comment.add");
 $dispatcher->dispatch("user.comment.edit");
 ```
+
+## License
+
+MIT License. See [LICENSE](LICENSE) for details.
