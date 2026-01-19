@@ -1,0 +1,30 @@
+# Composer
+/vendor/
+composer.phar
+
+# IDE and Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# PHPUnit
+.phpunit.result.cache
+coverage/
+.phpunit.cache/
+
+# PHP CS Fixer
+.php-cs-fixer.cache
+
+# PHPStan
+.phpstan.cache/
+
+# Build artifacts
+build/
+dist/
+
+# Environment files
+.env
+.env.local
