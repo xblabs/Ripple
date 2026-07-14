@@ -17,17 +17,6 @@ use PHPUnit\Framework\TestCase;
 use XB\Ripple\Dispatcher;
 use XB\Ripple\Event;
 
-/**
- * Custom event class for testing setEventClass() functionality.
- */
-class CustomEvent extends Event
-{
-    public function getCustom(): string
-    {
-        return 'custom';
-    }
-}
-
 class AdditionalTest extends TestCase
 {
     /**
@@ -39,11 +28,11 @@ class AdditionalTest extends TestCase
         $dispatcher = new Dispatcher();
         $received = [];
         // Closure expects two parameters not named 'e' or 'event'.
-        $dispatcher->addListener('test', function ($foo, $bar) use (&$received) {
+        $dispatcher->addListener( 'test', function ( $foo, $bar ) use ( &$received ) {
             $received = [$foo, $bar];
-        });
-        $dispatcher->dispatch('test', null, ['first', 'second']);
-        $this->assertSame(['first', 'second'], $received);
+        } );
+        $dispatcher->dispatch( 'test', null, ['first', 'second'] );
+        $this->assertSame( ['first', 'second'], $received );
     }
 
     /**
@@ -54,11 +43,69 @@ class AdditionalTest extends TestCase
     {
         $dispatcher = new Dispatcher();
         $captured = null;
-        $dispatcher->addListener('test', function ($event, $foo = null) use (&$captured) {
+        $dispatcher->addListener( 'test', function ( $event, $foo = null ) use ( &$captured ) {
             $captured = $event;
-        });
-        $dispatcher->dispatch('test', null, ['ignored']);
-        $this->assertInstanceOf(Event::class, $captured);
+        } );
+        $dispatcher->dispatch( 'test', null, ['ignored'] );
+        $this->assertInstanceOf( Event::class, $captured );
+    }
+
+    /**
+     * Regression (bug #2): the raw-params heuristic must be decided per-listener.
+     * A multi-arg closure that triggers param-spreading must NOT force a later,
+     * Event-expecting listener to receive raw params too.
+     */
+    public function test_useParamsAsCallbackArg_does_not_leak_to_later_listeners(): void
+    {
+        $dispatcher = new Dispatcher();
+        $rawReceived = null;
+        $secondReceived = 'NOT-SET';
+
+        // Higher priority: multi-arg, triggers raw-params mode for itself only.
+        $dispatcher->addListener( 'evt', function ( $foo, $bar ) use ( &$rawReceived ) {
+            $rawReceived = [$foo, $bar];
+        }, 100 );
+
+        // Lower priority: expects the Event object.
+        $dispatcher->addListener( 'evt', function ( $event ) use ( &$secondReceived ) {
+            $secondReceived = $event;
+        }, 50 );
+
+        $dispatcher->dispatch( 'evt', null, ['x', 'y'] );
+
+        $this->assertSame( ['x', 'y'], $rawReceived );
+        $this->assertInstanceOf( Event::class, $secondReceived );
+    }
+
+    /**
+     * Regression (bug #5): falsy-but-valid target and params must be preserved
+     * on the event, not silently dropped by an !empty() check.
+     *
+     * @dataProvider falsyParamProvider
+     */
+    public function test_dispatch_preserves_falsy_target_and_params( $target, $params ): void
+    {
+        $dispatcher = new Dispatcher();
+        $captured = null;
+        $dispatcher->addListener( 'test', function ( Event $e ) use ( &$captured ) {
+            $captured = $e;
+        } );
+
+        $dispatcher->dispatch( 'test', $target, $params );
+
+        $this->assertSame( $target, $captured->getTarget() );
+        $this->assertSame( $params, $captured->getParams() );
+    }
+
+    public static function falsyParamProvider(): array
+    {
+        return [
+            'string zero'  => ['0', '0'],
+            'int zero'     => ['0', 0],
+            'false'        => ['0', false],
+            'empty string' => ['0', ''],
+            'empty array'  => ['0', []],
+        ];
     }
 
     /**
@@ -66,10 +113,10 @@ class AdditionalTest extends TestCase
      */
     public function test_addListener_with_non_callable_throws_type_error(): void
     {
-        $this->expectException(\TypeError::class);
+        $this->expectException( \TypeError::class );
         $dispatcher = new Dispatcher();
         // Intentionally invalid
-        $dispatcher->addListener('test', 'not callable');
+        $dispatcher->addListener( 'test', 'not callable' );
     }
 
     /**
@@ -78,14 +125,14 @@ class AdditionalTest extends TestCase
     public function test_setEventClass_uses_custom_event_subclass(): void
     {
         $dispatcher = new Dispatcher();
-        $dispatcher->setEventClass(CustomEvent::class);
+        $dispatcher->setEventClass( CustomEvent::class );
         $captured = null;
-        $dispatcher->addListener('custom', function ($event) use (&$captured) {
+        $dispatcher->addListener( 'custom', function ( $event ) use ( &$captured ) {
             $captured = $event;
-        });
-        $dispatcher->dispatch('custom');
-        $this->assertInstanceOf(CustomEvent::class, $captured);
-        $this->assertSame('custom', $captured->getCustom());
+        } );
+        $dispatcher->dispatch( 'custom' );
+        $this->assertInstanceOf( CustomEvent::class, $captured );
+        $this->assertSame( 'custom', $captured->getCustom() );
     }
 
     /**
@@ -95,11 +142,11 @@ class AdditionalTest extends TestCase
     {
         $dispatcher = new Dispatcher();
         $listener = static function () {};
-        $dispatcher->addListener('multi', $listener);
-        $dispatcher->addListener('multi', $listener);
-        $removedCount = $dispatcher->removeListenersForEvent('multi');
-        $this->assertSame(2, $removedCount);
-        $this->assertFalse($dispatcher->hasListener('multi'));
+        $dispatcher->addListener( 'multi', $listener );
+        $dispatcher->addListener( 'multi', $listener );
+        $removedCount = $dispatcher->removeListenersForEvent( 'multi' );
+        $this->assertSame( 2, $removedCount );
+        $this->assertFalse( $dispatcher->hasListener( 'multi' ) );
     }
 
     /**
@@ -108,7 +155,7 @@ class AdditionalTest extends TestCase
     public function test_dispatch_without_listeners_returns_null(): void
     {
         $dispatcher = new Dispatcher();
-        $this->assertNull($dispatcher->dispatch('no.listeners'));
+        $this->assertNull( $dispatcher->dispatch( 'no.listeners' ) );
     }
 
     /**
@@ -118,13 +165,13 @@ class AdditionalTest extends TestCase
     {
         $dispatcher = new Dispatcher();
         $captured = null;
-        $dispatcher->addListener('object.event', function (Event $e) use (&$captured) {
+        $dispatcher->addListener( 'object.event', function ( Event $e ) use ( &$captured ) {
             $captured = $e;
-        });
+        } );
         $params = new \stdClass();
         $params->foo = 'bar';
-        $dispatcher->dispatch('object.event', null, $params);
-        $this->assertInstanceOf(Event::class, $captured);
-        $this->assertSame('bar', $captured->getParam('foo'));
+        $dispatcher->dispatch( 'object.event', null, $params );
+        $this->assertInstanceOf( Event::class, $captured );
+        $this->assertSame( 'bar', $captured->getParam( 'foo' ) );
     }
 }

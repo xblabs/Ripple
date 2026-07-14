@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Henry Schmieder
  * @version 0.1 20/10/12 22:34
@@ -38,7 +39,7 @@ class StaticTest extends TestCase
 
 	public function setUp(): void
 	{
-		$this->_setByListeners = array();
+		$this->_setByListeners = [];
 		$this->_eventsTrackedTrueReturnCount = 0;
 		$this->_catchedEvent = null;
 	}
@@ -46,7 +47,7 @@ class StaticTest extends TestCase
 
 	public function tearDown(): void
 	{
-		DispatcherStatic::removeAllListeners();
+		DispatcherStatic::reset();
 		$this->_eventGivenToListenerA = null;
 	}
 
@@ -60,7 +61,7 @@ class StaticTest extends TestCase
 
 	public function test_events_addPublicListenerCallback(): void
 	{
-		DispatcherStatic::addListener( 'test', array( $this, 'listenerA' ) );
+		DispatcherStatic::addListener( 'test', [ $this, 'listenerA' ] );
 		$this->assertCount( 1, DispatcherStatic::getAllListeners() );
 
 	}
@@ -76,7 +77,7 @@ class StaticTest extends TestCase
 
 	public function test_events_dispatch_eventIsString(): void
 	{
-		DispatcherStatic::addListener( 'test', array( $this, 'listenerDefault' ) );
+		DispatcherStatic::addListener( 'test', [ $this, 'listenerDefault' ] );
 		DispatcherStatic::dispatch( 'test' );
 		$this->assertNull( $this->_catchedEvent->getTarget() );
 		$this->assertEquals( 'test', $this->_catchedEvent->getType() );
@@ -87,18 +88,18 @@ class StaticTest extends TestCase
 
 	public function test_events_dispatch_eventIsEvent(): void
 	{
-		DispatcherStatic::addListener( 'test', array( $this, 'listenerDefault' ) );
-		DispatcherStatic::dispatch( new Event( 'test', $this, array( 1, 2 ), false ) );
+		DispatcherStatic::addListener( 'test', [ $this, 'listenerDefault' ] );
+		DispatcherStatic::dispatch( new Event( 'test', $this, [ 1, 2 ], false ) );
 		$this->assertEquals( $this, $this->_catchedEvent->getTarget() );
 		$this->assertEquals( 'test', $this->_catchedEvent->getType() );
 		$this->assertIsArray( $this->_catchedEvent->getParam() );
-		$this->assertEquals( array( 1, 2 ), $this->_catchedEvent->getParams() );
+		$this->assertEquals( [ 1, 2 ], $this->_catchedEvent->getParams() );
 	}
 
 
 	public function test_events_fireEvent_invokeCallback_expectsArray(): void
 	{
-		DispatcherStatic::addListener( 'test', array( $this, 'listenerA' ) );
+		DispatcherStatic::addListener( 'test', [ $this, 'listenerA' ] );
 		$result = DispatcherStatic::dispatch( 'test', $this );
 		$this->assertIsArray( $result );
 		$this->assertEquals( static::LISTENER_A_RESULT, $result[ 0 ] );
@@ -114,7 +115,7 @@ class StaticTest extends TestCase
 
 	public function test_events_listener_gets_event_object(): void
 	{
-		DispatcherStatic::addListener( 'test', array( $this, 'listenerA' ) );
+		DispatcherStatic::addListener( 'test', [ $this, 'listenerA' ] );
 		DispatcherStatic::dispatch( 'test', $this );
 		$this->assertInstanceOf( Event::class, $this->_eventGivenToListenerA );
 	}
@@ -124,7 +125,7 @@ class StaticTest extends TestCase
 	{
 		$hasListener = DispatcherStatic::hasListener( 'test' );
 		$this->assertFalse( $hasListener );
-		DispatcherStatic::addListener( 'test', array( $this, 'listenerA' ) );
+		DispatcherStatic::addListener( 'test', [ $this, 'listenerA' ] );
 		$hasListener = DispatcherStatic::hasListener( 'test' );
 		$this->assertTrue( $hasListener );
 	}
@@ -132,9 +133,9 @@ class StaticTest extends TestCase
 
 	public function test_events_getListenersForType(): void
 	{
-		DispatcherStatic::addListener( 'test', array( $this, 'listenerA' ) );
-		DispatcherStatic::addListener( 'test', array( $this, 'listenerB' ) );
-		DispatcherStatic::addListener( 'anotherType', array( $this, 'listenerB' ) );
+		DispatcherStatic::addListener( 'test', [ $this, 'listenerA' ] );
+		DispatcherStatic::addListener( 'test', [ $this, 'listenerB' ] );
+		DispatcherStatic::addListener( 'anotherType', [ $this, 'listenerB' ] );
 		$listeners = DispatcherStatic::getListenersForEvent( 'test' );
 		$this->assertEquals( 2, count( $listeners ) );
 	}
@@ -142,9 +143,9 @@ class StaticTest extends TestCase
 
 	public function test_events_getAllListeners(): void
 	{
-		DispatcherStatic::addListener( 'test', array( $this, 'listenerA' ) );
-		DispatcherStatic::addListener( 'test', array( $this, 'listenerB' ) );
-		DispatcherStatic::addListener( 'anotherType', array( $this, 'listenerB' ) );
+		DispatcherStatic::addListener( 'test', [ $this, 'listenerA' ] );
+		DispatcherStatic::addListener( 'test', [ $this, 'listenerB' ] );
+		DispatcherStatic::addListener( 'anotherType', [ $this, 'listenerB' ] );
 		$listeners = DispatcherStatic::getAllListeners();
 		$this->assertCount( 3, $listeners );
 	}
@@ -152,9 +153,9 @@ class StaticTest extends TestCase
 
 	public function test_events_removeAllListeners(): void
 	{
-		DispatcherStatic::addListener( 'test', array( $this, 'listenerA' ) );
-		DispatcherStatic::addListener( 'test', array( $this, 'listenerB' ) );
-		DispatcherStatic::addListener( 'anotherType', array( $this, 'listenerB' ) );
+		DispatcherStatic::addListener( 'test', [ $this, 'listenerA' ] );
+		DispatcherStatic::addListener( 'test', [ $this, 'listenerB' ] );
+		DispatcherStatic::addListener( 'anotherType', [ $this, 'listenerB' ] );
 		DispatcherStatic::removeAllListeners();
 		$listeners = DispatcherStatic::getAllListeners();
 		$this->assertCount( 0, $listeners );
@@ -163,8 +164,8 @@ class StaticTest extends TestCase
 
 	public function test_events_multipleListeners_normalOrder_lastAttachedListener_firesFirst(): void
 	{
-		DispatcherStatic::addListener( 'test', array( $this, 'listenerA' ) );
-		DispatcherStatic::addListener( 'test', array( $this, 'listenerB' ) );
+		DispatcherStatic::addListener( 'test', [ $this, 'listenerA' ] );
+		DispatcherStatic::addListener( 'test', [ $this, 'listenerB' ] );
 		$result = DispatcherStatic::dispatch( 'test', $this );
 		$this->assertCount( 2, $result );
 		$this->assertEquals( static::LISTENER_B_RESULT, $result[ 0 ] );
@@ -195,8 +196,8 @@ class StaticTest extends TestCase
 
 	public function test_events_stopPropagation(): void
 	{
-		DispatcherStatic::addListener( 'test', array( $this, 'listenerACancel' ), 300 );
-		DispatcherStatic::addListener( 'test', array( $this, 'listenerB' ), 100 );
+		DispatcherStatic::addListener( 'test', [ $this, 'listenerACancel' ], 300 );
+		DispatcherStatic::addListener( 'test', [ $this, 'listenerB' ], 100 );
 		$result = DispatcherStatic::dispatch( 'test', $this );
 		$this->assertCount( 1, $result );
 	}
@@ -243,7 +244,7 @@ class StaticTest extends TestCase
 
 	public function test_events_getParam_noArg_fetches_params(): void
 	{
-		DispatcherStatic::addListener( 'test', array( $this, 'listenerDefault' ) );
+		DispatcherStatic::addListener( 'test', [ $this, 'listenerDefault' ] );
 		DispatcherStatic::dispatch( 'test', $this, new EventTestParam() );
 		$this->assertInstanceOf( EventTestParam::class, $this->_catchedEvent->getParam() );
 	}
@@ -251,16 +252,16 @@ class StaticTest extends TestCase
 
 	public function test_events_getParam_namedArg(): void
 	{
-		DispatcherStatic::addListener( 'test', array( $this, 'listenerDefault' ) );
-		DispatcherStatic::dispatch( 'test', $this, array( 'param1' => new EventTestParam() ) );
+		DispatcherStatic::addListener( 'test', [ $this, 'listenerDefault' ] );
+		DispatcherStatic::dispatch( 'test', $this, [ 'param1' => new EventTestParam() ] );
 		$this->assertInstanceOf( EventTestParam::class, $this->_catchedEvent->getParam( 'param1' ) );
 	}
 
 
 	public function test_events_getParams(): void
 	{
-		DispatcherStatic::addListener( 'test', array( $this, 'listenerDefault' ) );
-		DispatcherStatic::dispatch( 'test', $this, array( 'param1' => new EventTestParam() ) );
+		DispatcherStatic::addListener( 'test', [ $this, 'listenerDefault' ] );
+		DispatcherStatic::dispatch( 'test', $this, [ 'param1' => new EventTestParam() ] );
 		$params = $this->_catchedEvent->getParams();
 		$this->assertInstanceOf( EventTestParam::class, $params[ 'param1' ] );
 	}
@@ -268,9 +269,9 @@ class StaticTest extends TestCase
 
 	public function test_events_removeSingleListener(): void
 	{
-		DispatcherStatic::addListener( 'test', array( $this, 'listenerDefault' ) );
+		DispatcherStatic::addListener( 'test', [ $this, 'listenerDefault' ] );
 		$this->assertCount( 1, DispatcherStatic::getAllListeners() );
-		DispatcherStatic::removeListener( 'test', array( $this, 'listenerDefault' ) );
+		DispatcherStatic::removeListener( 'test', [ $this, 'listenerDefault' ] );
 		$this->assertCount( 0, DispatcherStatic::getAllListeners() );
 		DispatcherStatic::dispatch( 'test' );
 		$this->assertNull( $this->_catchedEvent );
@@ -279,8 +280,8 @@ class StaticTest extends TestCase
 
 	public function test_events_removeAllListenersForEvent(): void
 	{
-		DispatcherStatic::addListener( 'test', array( $this, 'listenerDefault' ) );
-		DispatcherStatic::addListener( 'test', array( $this, 'listenerA' ) );
+		DispatcherStatic::addListener( 'test', [ $this, 'listenerDefault' ] );
+		DispatcherStatic::addListener( 'test', [ $this, 'listenerA' ] );
 		$this->assertCount( 2, DispatcherStatic::getAllListeners() );
 		DispatcherStatic::removeListenersForEvent( 'test' );
 		$this->assertCount( 0, DispatcherStatic::getAllListeners() );
@@ -289,14 +290,46 @@ class StaticTest extends TestCase
 	}
 
 
-	public function test_event_aggregate(): void
+	public function test_event_subscriber(): void
 	{
 		$listener = new StaticTestEventTestListener();
-		DispatcherStatic::addListenerAggregate( 'test', $listener );
+		DispatcherStatic::addSubscriber( $listener );
 		DispatcherStatic::dispatch( 'test:beforeTest' );
 		DispatcherStatic::dispatch( 'test:afterTest' );
 		DispatcherStatic::dispatch( 'test:nonExisting' );
 		$this->assertEquals( 2, count( $listener->registrar->capturedTypes ) );
+	}
+
+
+	public function test_reset_replaces_dispatcher_instance(): void
+	{
+		$first = DispatcherStatic::dispatcher();
+		DispatcherStatic::reset();
+		$second = DispatcherStatic::dispatcher();
+		$this->assertNotSame( $first, $second );
+	}
+
+
+	public function test_reset_clears_custom_event_class_but_removeAll_keeps_it(): void
+	{
+		DispatcherStatic::setEventClass( CustomEvent::class );
+		$this->assertSame( CustomEvent::class, DispatcherStatic::getEventClass() );
+
+		// removeAllListeners keeps the same instance and its custom event class...
+		DispatcherStatic::removeAllListeners();
+		$this->assertSame( CustomEvent::class, DispatcherStatic::getEventClass() );
+
+		// ...whereas reset() drops the instance entirely.
+		DispatcherStatic::reset();
+		$this->assertSame( Event::class, DispatcherStatic::getEventClass() );
+	}
+
+
+	public function test_setDispatcher_injects_instance(): void
+	{
+		$injected = new Dispatcher();
+		DispatcherStatic::setDispatcher( $injected );
+		$this->assertSame( $injected, DispatcherStatic::dispatcher() );
 	}
 
 

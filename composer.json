@@ -4,7 +4,11 @@
   "type": "library",
   "license": "MIT",
   "require": {
-    "php": ">=8.0"
+    "php": ">=8.1",
+    "psr/event-dispatcher": "^1.0"
+  },
+  "provide": {
+    "psr/event-dispatcher-implementation": "1.0"
   },
   "authors": [
     {
@@ -19,6 +23,7 @@
     "listener",
     "observer",
     "priority",
+    "psr-14",
     "php"
   ],
   "autoload": {
@@ -32,13 +37,30 @@
     }
   },
   "require-dev": {
-    "phpunit/phpunit": "^9.5"
+    "phpunit/phpunit": "^9.6",
+    "phpstan/phpstan": "^2.0",
+    "friendsofphp/php-cs-fixer": "^3.64"
   },
- "extra": {
+  "scripts": {
+    "test": "phpunit",
+    "test:coverage": "phpunit --coverage-text --coverage-clover=coverage/clover.xml",
+    "analyse": "phpstan analyse",
+    "cs": "php-cs-fixer fix --dry-run --diff",
+    "cs:fix": "php-cs-fixer fix",
+    "ci": [
+      "@test",
+      "@analyse",
+      "@cs"
+    ]
+  },
+  "extra": {
     "branch-alias": {
-      "dev-master": "1.x-dev"
+      "dev-master": "2.x-dev"
     },
-    "version": "1.0.0"
+    "version": "2.0.0"
+  },
+  "config": {
+    "sort-packages": true
   },
   "minimum-stability": "stable",
   "prefer-stable": true

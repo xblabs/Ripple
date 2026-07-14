@@ -1,8 +1,12 @@
 <?php
 
+declare( strict_types=1 );
+
 namespace XB\Ripple;
 
-class Event
+use Psr\EventDispatcher\StoppableEventInterface;
+
+class Event implements StoppableEventInterface
 {
 	public function __construct(
 		protected string|null        $type = null,
@@ -68,12 +72,22 @@ class Event
 			return $this->params[ $name ] ?? $default;
 		}
 
-		return $this->params?->{$name} ?? $default;
+		if( is_object( $this->params ) ) {
+			return $this->params->{$name} ?? $default;
+		}
+
+		return $default;
 	}
 
 
 	public function setParam( string|int $name, mixed $value ): static
 	{
+		// null or scalar params have no addressable slot: promote to an array
+		// so the assignment is well-defined instead of a fatal error.
+		if( !is_array( $this->params ) && !( $this->params instanceof \ArrayAccess ) && !is_object( $this->params ) ) {
+			$this->params = [];
+		}
+
 		if( is_array( $this->params ) || $this->params instanceof \ArrayAccess ) {
 			$this->params[ $name ] = $value;
 		} else {

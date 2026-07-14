@@ -16,6 +16,7 @@ use PHPUnit\Framework\TestCase;
 use XB\Ripple\Dispatcher;
 use XB\Ripple\DispatcherStatic;
 use XB\Ripple\Event;
+use XB\Ripple\EventSubscriberInterface;
 use XB\Ripple\Exception;
 
 class DispatcherExceptionTest extends TestCase
@@ -38,10 +39,10 @@ class DispatcherExceptionTest extends TestCase
      */
     public function test_setEventClass_throws_for_invalid_class(): void
     {
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage(Exception::INVALID_EVENT_CLASS);
+        $this->expectException( Exception::class );
+        $this->expectExceptionMessage( Exception::INVALID_EVENT_CLASS );
 
-        $this->dispatcher->setEventClass(\stdClass::class);
+        $this->dispatcher->setEventClass( \stdClass::class );
     }
 
     /**
@@ -50,12 +51,12 @@ class DispatcherExceptionTest extends TestCase
     public function test_setEventClass_accepts_event_subclass(): void
     {
         // Using CustomEvent from AdditionalTest
-        if (!class_exists(CustomEvent::class)) {
-            $this->markTestSkipped('CustomEvent class not available');
+        if ( !class_exists( CustomEvent::class ) ) {
+            $this->markTestSkipped( 'CustomEvent class not available' );
         }
 
-        $this->dispatcher->setEventClass(CustomEvent::class);
-        $this->addToAssertionCount(1); // No exception thrown = success
+        $this->dispatcher->setEventClass( CustomEvent::class );
+        $this->addToAssertionCount( 1 ); // No exception thrown = success
     }
 
     /**
@@ -63,9 +64,9 @@ class DispatcherExceptionTest extends TestCase
      */
     public function test_setEventClass_throws_for_nonexistent_class(): void
     {
-        $this->expectException(Exception::class); // Validation throws Exception
+        $this->expectException( Exception::class ); // Validation throws Exception
 
-        $this->dispatcher->setEventClass('NonExistentClass');
+        $this->dispatcher->setEventClass( 'NonExistentClass' );
     }
 
     /**
@@ -73,14 +74,14 @@ class DispatcherExceptionTest extends TestCase
      */
     public function test_listener_exception_propagates(): void
     {
-        $this->dispatcher->addListener('test', function() {
-            throw new \RuntimeException('Listener failed');
-        });
+        $this->dispatcher->addListener( 'test', function() {
+            throw new \RuntimeException( 'Listener failed' );
+        } );
 
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Listener failed');
+        $this->expectException( \RuntimeException::class );
+        $this->expectExceptionMessage( 'Listener failed' );
 
-        $this->dispatcher->dispatch('test');
+        $this->dispatcher->dispatch( 'test' );
     }
 
     /**
@@ -90,26 +91,26 @@ class DispatcherExceptionTest extends TestCase
     {
         $executed = [];
 
-        $this->dispatcher->addListener('test', function() use (&$executed) {
+        $this->dispatcher->addListener( 'test', function() use ( &$executed ) {
             $executed[] = 'first';
             return 'first';
-        }, 300);
+        }, 300 );
 
-        $this->dispatcher->addListener('test', function() {
-            throw new \RuntimeException('Second listener failed');
-        }, 200);
+        $this->dispatcher->addListener( 'test', function() {
+            throw new \RuntimeException( 'Second listener failed' );
+        }, 200 );
 
-        $this->dispatcher->addListener('test', function() use (&$executed) {
+        $this->dispatcher->addListener( 'test', function() use ( &$executed ) {
             $executed[] = 'third'; // Should not execute
             return 'third';
-        }, 100);
+        }, 100 );
 
         try {
-            $this->dispatcher->dispatch('test');
-            $this->fail('Expected RuntimeException to be thrown');
-        } catch (\RuntimeException $e) {
-            $this->assertSame('Second listener failed', $e->getMessage());
-            $this->assertSame(['first'], $executed);
+            $this->dispatcher->dispatch( 'test' );
+            $this->fail( 'Expected RuntimeException to be thrown' );
+        } catch ( \RuntimeException $e ) {
+            $this->assertSame( 'Second listener failed', $e->getMessage() );
+            $this->assertSame( ['first'], $executed );
         }
     }
 
@@ -119,9 +120,9 @@ class DispatcherExceptionTest extends TestCase
     public function test_removeListener_nonexistent_type_returns_false(): void
     {
         $listener = function() {};
-        $result = $this->dispatcher->removeListener('nonexistent', $listener);
+        $result = $this->dispatcher->removeListener( 'nonexistent', $listener );
 
-        $this->assertFalse($result);
+        $this->assertFalse( $result );
     }
 
     /**
@@ -132,11 +133,11 @@ class DispatcherExceptionTest extends TestCase
         $listener1 = function() { return 'A'; };
         $listener2 = function() { return 'B'; };
 
-        $this->dispatcher->addListener('test', $listener1);
-        $result = $this->dispatcher->removeListener('test', $listener2);
+        $this->dispatcher->addListener( 'test', $listener1 );
+        $result = $this->dispatcher->removeListener( 'test', $listener2 );
 
-        $this->assertFalse($result);
-        $this->assertTrue($this->dispatcher->hasListener('test'));
+        $this->assertFalse( $result );
+        $this->assertTrue( $this->dispatcher->hasListener( 'test' ) );
     }
 
     /**
@@ -147,18 +148,18 @@ class DispatcherExceptionTest extends TestCase
         $listener = function() { return 'test'; };
 
         // Add same listener 3 times
-        $this->dispatcher->addListener('test', $listener);
-        $this->dispatcher->addListener('test', $listener);
-        $this->dispatcher->addListener('test', $listener);
+        $this->dispatcher->addListener( 'test', $listener );
+        $this->dispatcher->addListener( 'test', $listener );
+        $this->dispatcher->addListener( 'test', $listener );
 
-        $this->assertCount(3, $this->dispatcher->getListenersForEvent('test'));
+        $this->assertCount( 3, $this->dispatcher->getListenersForEvent( 'test' ) );
 
         // Remove should remove all instances
-        $result = $this->dispatcher->removeListener('test', $listener);
+        $result = $this->dispatcher->removeListener( 'test', $listener );
 
-        $this->assertTrue($result);
-        $this->assertCount(0, $this->dispatcher->getListenersForEvent('test'));
-        $this->assertFalse($this->dispatcher->hasListener('test'));
+        $this->assertTrue( $result );
+        $this->assertCount( 0, $this->dispatcher->getListenersForEvent( 'test' ) );
+        $this->assertFalse( $this->dispatcher->hasListener( 'test' ) );
     }
 
     /**
@@ -166,9 +167,9 @@ class DispatcherExceptionTest extends TestCase
      */
     public function test_removeListenersForEvent_nonexistent_returns_zero(): void
     {
-        $count = $this->dispatcher->removeListenersForEvent('nonexistent');
+        $count = $this->dispatcher->removeListenersForEvent( 'nonexistent' );
 
-        $this->assertSame(0, $count);
+        $this->assertSame( 0, $count );
     }
 
     /**
@@ -176,10 +177,10 @@ class DispatcherExceptionTest extends TestCase
      */
     public function test_getListenersForEvent_nonexistent_returns_empty_array(): void
     {
-        $listeners = $this->dispatcher->getListenersForEvent('nonexistent');
+        $listeners = $this->dispatcher->getListenersForEvent( 'nonexistent' );
 
-        $this->assertIsArray($listeners);
-        $this->assertEmpty($listeners);
+        $this->assertIsArray( $listeners );
+        $this->assertEmpty( $listeners );
     }
 
     /**
@@ -187,9 +188,9 @@ class DispatcherExceptionTest extends TestCase
      */
     public function test_dispatch_no_listeners_returns_null(): void
     {
-        $result = $this->dispatcher->dispatch('nonexistent');
+        $result = $this->dispatcher->dispatch( 'nonexistent' );
 
-        $this->assertNull($result);
+        $this->assertNull( $result );
     }
 
     /**
@@ -197,9 +198,9 @@ class DispatcherExceptionTest extends TestCase
      */
     public function test_dispatchUntil_no_listeners_returns_null(): void
     {
-        $result = $this->dispatcher->dispatchUntil('nonexistent');
+        $result = $this->dispatcher->dispatchUntil( 'nonexistent' );
 
-        $this->assertNull($result);
+        $this->assertNull( $result );
     }
 
     /**
@@ -207,9 +208,9 @@ class DispatcherExceptionTest extends TestCase
      */
     public function test_dispatchGetFirst_no_listeners_returns_null(): void
     {
-        $result = $this->dispatcher->dispatchGetFirst('nonexistent');
+        $result = $this->dispatcher->dispatchGetFirst( 'nonexistent' );
 
-        $this->assertNull($result);
+        $this->assertNull( $result );
     }
 
     /**
@@ -220,28 +221,28 @@ class DispatcherExceptionTest extends TestCase
         $executed = [];
         $dispatcher = $this->dispatcher;
 
-        $listener1 = function() use (&$executed, $dispatcher) {
+        $listener1 = function() use ( &$executed, $dispatcher ) {
             $executed[] = 'first';
             // Remove all listeners during dispatch
             $dispatcher->removeAllListeners();
             return 'first';
         };
 
-        $listener2 = function() use (&$executed) {
+        $listener2 = function() use ( &$executed ) {
             $executed[] = 'second';
             return 'second';
         };
 
-        $this->dispatcher->addListener('test', $listener2, 100); // Lower priority, added first
-        $this->dispatcher->addListener('test', $listener1, 200); // Higher priority
+        $this->dispatcher->addListener( 'test', $listener2, 100 ); // Lower priority, added first
+        $this->dispatcher->addListener( 'test', $listener1, 200 ); // Higher priority
 
-        $result = $this->dispatcher->dispatch('test');
+        $result = $this->dispatcher->dispatch( 'test' );
 
         // First listener executes and clears listeners
         // But dispatch should have already captured the listener list
         // So second listener may or may not execute depending on implementation
-        $this->assertContains('first', $executed);
-        $this->assertIsArray($result);
+        $this->assertContains( 'first', $executed );
+        $this->assertIsArray( $result );
     }
 
     /**
@@ -252,48 +253,74 @@ class DispatcherExceptionTest extends TestCase
         $depth = 0;
         $maxDepth = 3;
 
-        $listener = function(Event $e) use (&$depth, $maxDepth) {
+        $listener = function( Event $e ) use ( &$depth, $maxDepth ) {
             $depth++;
-            if ($depth < $maxDepth) {
+            if ( $depth < $maxDepth ) {
                 // Dispatch same event recursively
                 $dispatcher = new Dispatcher();
-                $dispatcher->dispatch('recursive');
+                $dispatcher->dispatch( 'recursive' );
             }
             return $depth;
         };
 
-        $this->dispatcher->addListener('recursive', $listener);
-        $result = $this->dispatcher->dispatch('recursive');
+        $this->dispatcher->addListener( 'recursive', $listener );
+        $result = $this->dispatcher->dispatch( 'recursive' );
 
-        $this->assertSame(1, $depth); // Only outer dispatch increments
-        $this->assertIsArray($result);
+        $this->assertSame( 1, $depth ); // Only outer dispatch increments
+        $this->assertIsArray( $result );
     }
 
     /**
-     * Test dispatching Event object with aggregate pattern
+     * Test dispatching an Event object routed to a subscriber method
      */
-    public function test_dispatch_event_object_with_aggregate_pattern(): void
+    public function test_dispatch_event_object_with_subscriber(): void
     {
-        $executed = false;
-
-        $listener = new class {
+        $listener = new class implements EventSubscriberInterface {
             public $wasExecuted = false;
+
+            public static function getSubscribedEvents(): array {
+                return ['component:testMethod' => 'testMethod'];
+            }
 
             public function testMethod() {
                 $this->wasExecuted = true;
-                return 'aggregate';
+                return 'subscribed';
             }
         };
 
-        $this->dispatcher->addListenerAggregate('component', $listener);
+        $this->dispatcher->addSubscriber( $listener );
 
-        // Dispatch using Event object with aggregate pattern in type
-        $event = new Event('component:testMethod');
-        $result = $this->dispatcher->dispatch($event);
+        // A colon in the type is now an ordinary character; the exact listener resolves.
+        $event = new Event( 'component:testMethod' );
+        $result = $this->dispatcher->dispatch( $event );
 
-        $this->assertTrue($listener->wasExecuted);
-        $this->assertIsArray($result);
-        $this->assertSame('aggregate', $result[0]);
+        $this->assertTrue( $listener->wasExecuted );
+        $this->assertIsArray( $result );
+        $this->assertSame( 'subscribed', $result[0] );
+    }
+
+    /**
+     * Regression (bug #4): removeListener() must not leave sparse array keys that
+     * break a subsequent removeListenersForEvent() with an undefined-key warning.
+     */
+    public function test_removeListenersForEvent_after_removeListener_leaves_no_holes(): void
+    {
+        $first  = function () { return 'first'; };
+        $middle = function () { return 'middle'; };
+        $last   = function () { return 'last'; };
+
+        $this->dispatcher->addListener( 'evt', $first );
+        $this->dispatcher->addListener( 'evt', $middle );
+        $this->dispatcher->addListener( 'evt', $last );
+
+        // Removing the middle listener used to leave a hole at its integer key.
+        $this->assertTrue( $this->dispatcher->removeListener( 'evt', $middle ) );
+
+        // This used to warn (undefined key) and read a property on null.
+        $removed = $this->dispatcher->removeListenersForEvent( 'evt' );
+
+        $this->assertSame( 2, $removed );
+        $this->assertFalse( $this->dispatcher->hasListener( 'evt' ) );
     }
 
     /**
@@ -303,25 +330,25 @@ class DispatcherExceptionTest extends TestCase
     {
         $results = [];
 
-        $this->dispatcher->addListener('test', function() use (&$results) {
+        $this->dispatcher->addListener( 'test', function() use ( &$results ) {
             $results[] = 'first';
             return 'first';
-        }, 5);
+        }, 5 );
 
-        $this->dispatcher->addListener('test', function() use (&$results) {
+        $this->dispatcher->addListener( 'test', function() use ( &$results ) {
             $results[] = 'second';
             return 'second';
-        }, 5);
+        }, 5 );
 
-        $this->dispatcher->addListener('test', function() use (&$results) {
+        $this->dispatcher->addListener( 'test', function() use ( &$results ) {
             $results[] = 'third';
             return 'third';
-        }, 5);
+        }, 5 );
 
-        $this->dispatcher->dispatch('test');
+        $this->dispatcher->dispatch( 'test' );
 
         // With equal priority, last added fires first (LIFO)
-        $this->assertSame(['third', 'second', 'first'], $results);
+        $this->assertSame( ['third', 'second', 'first'], $results );
     }
 
     /**
@@ -331,15 +358,15 @@ class DispatcherExceptionTest extends TestCase
     {
         $executed = false;
 
-        $this->dispatcher->addListener('test', function() use (&$executed) {
+        $this->dispatcher->addListener( 'test', function() use ( &$executed ) {
             $executed = true;
             return 'single';
-        });
+        } );
 
-        $result = $this->dispatcher->dispatch('test');
+        $result = $this->dispatcher->dispatch( 'test' );
 
-        $this->assertTrue($executed);
-        $this->assertSame(['single'], $result);
+        $this->assertTrue( $executed );
+        $this->assertSame( ['single'], $result );
     }
 
     /**
@@ -347,8 +374,8 @@ class DispatcherExceptionTest extends TestCase
      */
     public function test_dispatcher_fluent_interface(): void
     {
-        $result = $this->dispatcher->setEventClass(Event::class);
+        $result = $this->dispatcher->setEventClass( Event::class );
 
-        $this->assertSame($this->dispatcher, $result);
+        $this->assertSame( $this->dispatcher, $result );
     }
 }

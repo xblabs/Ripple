@@ -1,11 +1,14 @@
 <?php
+
 /**
- * @version 0.1 09/05/2023 16:40
+ * @version 0.2 2026 v2 subscriber form
  */
 
 namespace Test\XB\Ripple;
 
-class EventTestListener
+use XB\Ripple\EventSubscriberInterface;
+
+class EventTestListener implements EventSubscriberInterface
 {
 	/** @var \stdClass */
 	public $registrar;
@@ -13,11 +16,19 @@ class EventTestListener
 	public function __construct()
 	{
 		$this->registrar = new \stdClass();
-		$this->registrar->capturedTypes = array();
+		$this->registrar->capturedTypes = [];
+	}
+
+	public static function getSubscribedEvents(): array
+	{
+		return [
+			'test:beforeTest' => 'beforeTest',
+			'test:afterTest'  => 'afterTest',
+		];
 	}
 
 	/**
-	 * @param $e \Ripple\Event
+	 * @param $e \XB\Ripple\Event
 	 */
 	public function beforeTest( $e )
 	{
@@ -26,7 +37,7 @@ class EventTestListener
 	}
 
 	/**
-	 * @param $e \Ripple\Event
+	 * @param $e \XB\Ripple\Event
 	 */
 	public function afterTest( $e )
 	{
