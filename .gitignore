@@ -25,6 +25,10 @@ coverage/
 # Build artifacts
 build/
 dist/
+*.zip
+
+# Local scratch notes (not part of the package)
+/NOTES.md
 
 # Environment files
 .env
