@@ -33,3 +33,7 @@ dist/
 # Environment files
 .env
 .env.local
+
+# Claude Code agent scaffolding (not part of the package)
+.claude/
+CLAUDE.md
